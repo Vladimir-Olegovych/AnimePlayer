@@ -1,0 +1,360 @@
+Index: app/src/main/res/layout/activity_player.xml
+===================================================================
+diff --git a/app/src/main/res/layout/activity_player.xml b/app/src/main/res/layout/activity_player.xml
+deleted file mode 100644
+--- a/app/src/main/res/layout/activity_player.xml	
++++ /dev/null	
+@@ -1,18 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:app="http://schemas.android.com/apk/res-auto"
+-    xmlns:tools="http://schemas.android.com/tools"
+-    android:background="@color/black"
+-    android:layout_width="match_parent"
+-    android:layout_height="match_parent">
+-
+-  <com.google.android.exoplayer2.ui.PlayerView
+-      android:id="@+id/playerView"
+-      android:layout_width="match_parent"
+-      android:layout_height="match_parent"
+-      app:layout_constraintBottom_toBottomOf="parent"
+-      app:layout_constraintEnd_toEndOf="parent"
+-      app:layout_constraintStart_toStartOf="parent"
+-      app:layout_constraintTop_toTopOf="parent" />
+-
+-</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_jojo5.xml
+===================================================================
+diff --git a/app/src/main/res/layout/activity_jojo5.xml b/app/src/main/res/layout/activity_jojo5.xml
+deleted file mode 100644
+--- a/app/src/main/res/layout/activity_jojo5.xml	
++++ /dev/null	
+@@ -1,59 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:app="http://schemas.android.com/apk/res-auto"
+-    xmlns:tools="http://schemas.android.com/tools"
+-    android:layout_width="match_parent"
+-    android:layout_height="match_parent"
+-    tools:context=".Jojo5Activity">
+-
+-    <ScrollView
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent">
+-
+-        <LinearLayout
+-            android:layout_width="match_parent"
+-            android:layout_height="wrap_content"
+-            android:orientation="vertical">
+-
+-            <TextView
+-                android:id="@+id/texTitle"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:textColor="@color/black"
+-                android:text="title"
+-                android:textSize="15sp" />
+-
+-            <ImageView
+-                android:id="@+id/imageView3"
+-                android:layout_width="200dp"
+-                android:layout_height="250dp"
+-                app:srcCompat="@drawable/ic_launcher_foreground" />
+-
+-            <TextView
+-                android:id="@+id/textDescription"
+-                android:layout_width="match_parent"
+-                android:layout_height="500dp"
+-
+-                android:textSize="20sp" />
+-
+-            <EditText
+-                android:id="@+id/textSeria"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:ems="10"
+-                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+-
+-            <Button
+-                android:id="@+id/button"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:text="Смотреть серию" />
+-
+-        </LinearLayout>
+-    </ScrollView>
+-
+-</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/animeplayer/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/animeplayer/MainActivity.kt b/app/src/main/java/com/example/animeplayer/MainActivity.kt
+--- a/app/src/main/java/com/example/animeplayer/MainActivity.kt	
++++ b/app/src/main/java/com/example/animeplayer/MainActivity.kt	(date 1671969000190)
+@@ -27,10 +27,8 @@
+     }
+ 
+     fun itemOnClickList(news: News){
+-        val intent = Intent(this, Jojo5Activity::class.java)
+-        intent.putExtra("image", news.image)
++        val intent = Intent(this, PlayActivity::class.java)
+         intent.putExtra("urL", news.urL)
+-        intent.putExtra("title", news.title)
+         startActivity(intent)
+     }
+     override fun onDestroy() {
+Index: app/src/main/java/com/example/animeplayer/PlayerActivity.kt
+===================================================================
+diff --git a/app/src/main/java/com/example/animeplayer/PlayerActivity.kt b/app/src/main/java/com/example/animeplayer/PlayerActivity.kt
+deleted file mode 100644
+--- a/app/src/main/java/com/example/animeplayer/PlayerActivity.kt	
++++ /dev/null	
+@@ -1,87 +0,0 @@
+-package com.example.animeplayer
+-
+-import androidx.appcompat.app.AppCompatActivity
+-import android.os.Bundle
+-import com.google.android.exoplayer2.*
+-import com.google.android.exoplayer2.source.MediaSource
+-import com.google.android.exoplayer2.ui.PlayerView
+-import com.google.android.exoplayer2.util.Util
+-import com.google.android.exoplayer2.source.ProgressiveMediaSource
+-import com.google.android.exoplayer2.upstream.*
+-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+-
+-class PlayerActivity : AppCompatActivity() , Player.Listener {
+-
+-    private var mPlayer: SimpleExoPlayer? = null
+-    private lateinit var playerView: PlayerView
+-
+-    private val videoURL = num1
+-
+-    override fun onCreate(savedInstanceState: Bundle?) {
+-        super.onCreate(savedInstanceState)
+-        setContentView(R.layout.activity_player)
+-
+-        playerView = findViewById(R.id.playerView)
+-
+-    }
+-
+-    private fun initPlayer() {
+-
+-        mPlayer = SimpleExoPlayer.Builder(this).build()
+-
+-        playerView.player = mPlayer
+-
+-        mPlayer!!.playWhenReady = true
+-
+-        mPlayer!!.setMediaSource(buildMediaSource())
+-
+-        mPlayer!!.prepare()
+-
+-    }
+-
+-    override fun onStart() {
+-        super.onStart()
+-        if (Util.SDK_INT >= 24) {
+-            initPlayer()
+-        }
+-    }
+-
+-    override fun onResume() {
+-        super.onResume()
+-        if (Util.SDK_INT < 24 || mPlayer == null) {
+-            initPlayer()
+-        }
+-    }
+-
+-    override fun onPause() {
+-        super.onPause()
+-        if (Util.SDK_INT < 24) {
+-            releasePlayer()
+-        }
+-    }
+-
+-    override fun onStop() {
+-        super.onStop()
+-        if (Util.SDK_INT >= 24) {
+-            releasePlayer()
+-        }
+-    }
+-
+-
+-    private fun releasePlayer() {
+-        if (mPlayer == null) {
+-            return
+-        }
+-        mPlayer!!.release()
+-        mPlayer = null
+-    }
+-
+-    private fun buildMediaSource(): MediaSource {
+-        val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
+-
+-        val mediaSource: MediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+-            .createMediaSource(MediaItem.fromUri(videoURL))
+-
+-        return mediaSource
+-    }
+-}
+\ No newline at end of file
+Index: app/src/main/java/com/example/animeplayer/Jojo5Activity.kt
+===================================================================
+diff --git a/app/src/main/java/com/example/animeplayer/Jojo5Activity.kt b/app/src/main/java/com/example/animeplayer/Jojo5Activity.kt
+deleted file mode 100644
+--- a/app/src/main/java/com/example/animeplayer/Jojo5Activity.kt	
++++ /dev/null	
+@@ -1,64 +0,0 @@
+-package com.example.animeplayer
+-
+-import androidx.appcompat.app.AppCompatActivity
+-import android.os.Bundle
+-import android.util.Log
+-import android.widget.ImageView
+-import android.widget.TextView
+-import com.squareup.picasso.Picasso
+-import org.jsoup.Jsoup
+-import org.jsoup.nodes.Document
+-import org.jsoup.nodes.Element
+-import org.jsoup.select.Elements
+-import java.io.IOException
+-
+-var num1 = ""
+-
+-class Jojo5Activity : AppCompatActivity() {
+-
+-    private lateinit var doc: Document
+-    private lateinit var secThread: Thread
+-    private lateinit var runnable: Runnable
+-
+-    override fun onCreate(savedInstanceState: Bundle?) {
+-        super.onCreate(savedInstanceState)
+-        setContentView(R.layout.activity_jojo5)
+-        val imgeView = findViewById<ImageView>(R.id.imageView3)
+-        val textTitle = findViewById<TextView>(R.id.texTitle)
+-
+-
+-        val image = intent.extras?.getString("image")
+-        Picasso.get().load(image).into(imgeView)
+-        val title = intent.extras?.getString("title")
+-        textTitle.text = title
+-        init()
+-    }
+-        private fun init() {
+-
+-            runnable = Runnable {
+-                run() {
+-                    getWeb()
+-                }
+-            }
+-            secThread = Thread(runnable)
+-            secThread.start()
+-        }
+-
+-        private fun getWeb() {
+-            val textDescription = findViewById<TextView>(R.id.textDescription)
+-            val urL = intent.extras?.getString("urL")
+-
+-
+-            try {
+-                doc = Jsoup.connect(urL).get()
+-                val video: Elements = doc.getElementsByTag("html")
+-                val description: Elements = doc.getElementsByClass("pcdescrf")
+-
+-                Log.d("sadasdaa", video.toString())
+-                textDescription.text = description.get(0).children().text()
+-
+-            } catch (e: IOException) {
+-                e.printStackTrace()
+-        }
+-    }
+-}
+\ No newline at end of file
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	
++++ b/app/src/main/AndroidManifest.xml	(date 1671968980980)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:tools="http://schemas.android.com/tools" >
++    xmlns:tools="http://schemas.android.com/tools">
+ 
+     <uses-permission android:name="android.permission.INTERNET" />
+ 
+@@ -13,24 +13,31 @@
+         android:roundIcon="@mipmap/ic_launcher_round"
+         android:supportsRtl="true"
+         android:theme="@style/Theme.AnimePlayer"
+-        tools:targetApi="31" >
++        tools:targetApi="31">
+         <activity
++            android:name=".PlayActivity"
++            android:exported="false">
++            <meta-data
++                android:name="android.app.lib_name"
++                android:value="" />
++        </activity>
++        <activity
+             android:name=".PlayerActivity"
+-            android:exported="false" >
++            android:exported="false">
+             <meta-data
+                 android:name="android.app.lib_name"
+                 android:value="" />
+         </activity>
+         <activity
+             android:name=".Jojo5Activity"
+-            android:exported="false" >
++            android:exported="false">
+             <meta-data
+                 android:name="android.app.lib_name"
+                 android:value="" />
+         </activity>
+         <activity
+             android:name=".MainActivity"
+-            android:exported="true" >
++            android:exported="true">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+ 
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	
++++ b/app/build.gradle	(date 1671969148516)
+@@ -16,7 +16,9 @@
+ 
+         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+     }
+-
++    buildFeatures {
++        viewBinding = true
++    }
+     buildTypes {
+         release {
+             minifyEnabled false
+@@ -42,7 +44,6 @@
+     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+ 
+-    implementation 'com.google.android.exoplayer:exoplayer:2.15.0'
+     implementation 'org.jsoup:jsoup:1.15.3'
+     implementation 'com.squareup.picasso:picasso:2.71828'
+ }
+\ No newline at end of file
